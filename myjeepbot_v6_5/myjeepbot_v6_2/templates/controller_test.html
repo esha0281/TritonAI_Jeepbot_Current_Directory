@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JeepBot Controller Test</title>
+<style>
+  body { font-family: monospace; background: #111; color: #0f0; margin: 20px; }
+  h1 { color: #fff; }
+  #status { color: #f80; margin-bottom: 16px; font-size: 1.1em; }
+  #name { color: #0af; margin-bottom: 20px; }
+  .section { margin-bottom: 24px; }
+  h2 { color: #aaa; font-size: 1em; margin-bottom: 8px; }
+  .bar-row { display: flex; align-items: center; margin-bottom: 6px; gap: 10px; }
+  .bar-label { width: 60px; text-align: right; color: #888; }
+  .bar-track { width: 300px; height: 18px; background: #222; border: 1px solid #444; position: relative; }
+  .bar-center { position: absolute; left: 50%; top: 0; width: 1px; height: 100%; background: #555; }
+  .bar-fill { position: absolute; height: 100%; background: #0f0; top: 0; transition: none; }
+  .bar-value { width: 60px; color: #ff0; }
+  .buttons { display: flex; flex-wrap: wrap; gap: 8px; }
+  .btn { width: 44px; height: 44px; border-radius: 6px; border: 2px solid #444;
+         background: #222; color: #888; display: flex; align-items: center;
+         justify-content: center; font-size: 0.8em; transition: background 0.05s; }
+  .btn.active { background: #0a0; color: #fff; border-color: #0f0; }
+  #hint { color: #666; font-size: 0.85em; margin-top: 24px; }
+  #highlight { color: #ff0; font-size: 1em; margin-top: 12px; min-height: 1.4em; }
+</style>
+</head>
+<body>
+<h1>Controller Test</h1>
+<div id="status">Waiting for controller... (press any button or move a stick)</div>
+<div id="name"></div>
+
+<div class="section">
+  <h2>AXES</h2>
+  <div id="axes"></div>
+</div>
+
+<div class="section">
+  <h2>BUTTONS</h2>
+  <div class="buttons" id="buttons"></div>
+</div>
+
+<div id="highlight"></div>
+<div id="hint">Move one stick or press one button at a time to identify its index.</div>
+
+<script>
+let prevAxes = [];
+let prevBtns = [];
+let axesDivs = [];
+let btnDivs  = [];
+let gp = null;
+
+function getGamepad() {
+  const pads = navigator.getGamepads ? navigator.getGamepads() : [];
+  for (const p of pads) { if (p) return p; }
+  return null;
+}
+
+function buildUI(pad) {
+  const axContainer = document.getElementById("axes");
+  const btContainer = document.getElementById("buttons");
+  axContainer.innerHTML = "";
+  btContainer.innerHTML = "";
+  axesDivs = [];
+  btnDivs  = [];
+
+  for (let i = 0; i < pad.axes.length; i++) {
+    const row = document.createElement("div");
+    row.className = "bar-row";
+    row.innerHTML = `
+      <span class="bar-label">Axis ${i}</span>
+      <div class="bar-track">
+        <div class="bar-center"></div>
+        <div class="bar-fill" id="axfill${i}" style="width:0;left:50%"></div>
+      </div>
+      <span class="bar-value" id="axval${i}">0.000</span>`;
+    axContainer.appendChild(row);
+    axesDivs.push({
+      fill: document.getElementById(`axfill${i}`),
+      val:  document.getElementById(`axval${i}`),
+    });
+  }
+
+  for (let i = 0; i < pad.buttons.length; i++) {
+    const d = document.createElement("div");
+    d.className = "btn";
+    d.id = `btn${i}`;
+    d.textContent = i;
+    btContainer.appendChild(d);
+    btnDivs.push(d);
+  }
+}
+
+function updateUI(pad) {
+  let changed = [];
+
+  for (let i = 0; i < pad.axes.length; i++) {
+    const v = pad.axes[i];
+    const pct = (v + 1) / 2 * 100;
+    const fill = axesDivs[i].fill;
+    if (v >= 0) {
+      fill.style.left  = "50%";
+      fill.style.width = (pct - 50) + "%";
+    } else {
+      fill.style.left  = pct + "%";
+      fill.style.width = (50 - pct) + "%";
+    }
+    fill.style.background = Math.abs(v) > 0.15 ? "#0f0" : "#333";
+    axesDivs[i].val.textContent = v.toFixed(3);
+
+    if (Math.abs(v - (prevAxes[i] ?? 0)) > 0.05) changed.push(`Axis ${i} = ${v.toFixed(3)}`);
+  }
+
+  for (let i = 0; i < pad.buttons.length; i++) {
+    const pressed = pad.buttons[i].pressed;
+    btnDivs[i].className = "btn" + (pressed ? " active" : "");
+    if (pressed && !prevBtns[i]) changed.push(`Button ${i} pressed`);
+  }
+
+  if (changed.length) {
+    document.getElementById("highlight").textContent = "⟶ " + changed.join("  |  ");
+  }
+
+  prevAxes = Array.from(pad.axes);
+  prevBtns = pad.buttons.map(b => b.pressed);
+}
+
+function tick() {
+  const pad = getGamepad();
+  if (pad && !gp) {
+    gp = pad;
+    document.getElementById("status").textContent = "Controller connected ✓";
+    document.getElementById("status").style.color = "#0f0";
+    document.getElementById("name").textContent = pad.id;
+    buildUI(pad);
+  }
+  if (gp) {
+    const fresh = getGamepad();
+    if (fresh) updateUI(fresh);
+  }
+  requestAnimationFrame(tick);
+}
+
+window.addEventListener("gamepadconnected", e => {
+  document.getElementById("status").textContent = "Controller connected ✓";
+  document.getElementById("status").style.color = "#0f0";
+  document.getElementById("name").textContent = e.gamepad.id;
+  gp = e.gamepad;
+  buildUI(e.gamepad);
+});
+
+window.addEventListener("gamepaddisconnected", () => {
+  gp = null;
+  document.getElementById("status").textContent = "Controller disconnected.";
+  document.getElementById("status").style.color = "#f00";
+  document.getElementById("name").textContent = "";
+});
+
+requestAnimationFrame(tick);
+</script>
+</body>
+</html>

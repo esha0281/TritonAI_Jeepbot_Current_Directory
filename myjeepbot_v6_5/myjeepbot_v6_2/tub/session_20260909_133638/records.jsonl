@@ -1,0 +1,4 @@
+{"frame_idx": 0, "image_file": "images/frame_0000000.jpg", "steering_norm": 0.711287, "steering_deg": 28.4515, "duty": -0.043172, "timestamp_ms": 1788986206240}
+{"frame_idx": 1, "image_file": "images/frame_0000001.jpg", "steering_norm": 0.31999, "steering_deg": 12.7996, "duty": -0.043172, "timestamp_ms": 1788986206516}
+{"frame_idx": 2, "image_file": "images/frame_0000002.jpg", "steering_norm": 0.0184, "steering_deg": 0.736, "duty": 0.022061, "timestamp_ms": 1788986214990}
+{"frame_idx": 3, "image_file": "images/frame_0000003.jpg", "steering_norm": -0.0, "steering_deg": 0.0, "duty": -0.167817, "timestamp_ms": 1788986221529}

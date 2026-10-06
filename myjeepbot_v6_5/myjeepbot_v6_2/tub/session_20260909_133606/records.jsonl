@@ -1,0 +1,7 @@
+{"frame_idx": 0, "image_file": "images/frame_0000000.jpg", "steering_norm": 0.11897, "steering_deg": 4.7588, "duty": -0.059103, "timestamp_ms": 1788986173705}
+{"frame_idx": 1, "image_file": "images/frame_0000001.jpg", "steering_norm": 0.378851, "steering_deg": 15.154, "duty": -0.041234, "timestamp_ms": 1788986173884}
+{"frame_idx": 2, "image_file": "images/frame_0000002.jpg", "steering_norm": -0.485572, "steering_deg": -19.4229, "duty": -0.053675, "timestamp_ms": 1788986174811}
+{"frame_idx": 3, "image_file": "images/frame_0000003.jpg", "steering_norm": -0.0, "steering_deg": -0.0, "duty": 0.349983, "timestamp_ms": 1788986176133}
+{"frame_idx": 4, "image_file": "images/frame_0000004.jpg", "steering_norm": -0.0, "steering_deg": -0.0, "duty": 0.007907, "timestamp_ms": 1788986177310}
+{"frame_idx": 5, "image_file": "images/frame_0000005.jpg", "steering_norm": -0.0, "steering_deg": 0.0, "duty": -0.038298, "timestamp_ms": 1788986184515}
+{"frame_idx": 6, "image_file": "images/frame_0000006.jpg", "steering_norm": -0.0, "steering_deg": 0.0, "duty": -0.0448, "timestamp_ms": 1788986185280}

@@ -1,0 +1,3 @@
+{"frame_idx": 0, "image_file": "images/frame_0000000.jpg", "steering_norm": -0.0, "steering_deg": 0.0, "duty": 0.008522, "timestamp_ms": 1788985587015}
+{"frame_idx": 1, "image_file": "images/frame_0000001.jpg", "steering_norm": -0.0, "steering_deg": 0.0, "duty": 0.008866, "timestamp_ms": 1788985587123}
+{"frame_idx": 2, "image_file": "images/frame_0000002.jpg", "steering_norm": -0.0, "steering_deg": 0.0, "duty": 0.0, "timestamp_ms": 1788985591030}
